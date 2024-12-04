@@ -1,0 +1,110 @@
+[gd_scene load_steps=15 format=3 uid="uid://3tyonrin7hng"]
+
+[ext_resource type="Texture2D" uid="uid://dxdv1rsgx2w3v" path="res://textures/face.png" id="1_fcjx1"]
+[ext_resource type="Texture2D" uid="uid://c52nj1iglxrwo" path="res://textures/ground.jpg" id="2_nhjdy"]
+[ext_resource type="Texture2D" uid="uid://c2sk50g7mwyhs" path="res://textures/naked_guy.png" id="3_cxxfn"]
+[ext_resource type="PackedScene" uid="uid://ca40dewht5qxk" path="res://scenes/player.tscn" id="4_b4vbv"]
+[ext_resource type="AudioStream" uid="uid://55uyigpl6vhq" path="res://sfx/10. Claw Finger - Akira Yamaoka (Silent Hill Soundtrack).mp3" id="5_nrhvq"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_bljnh"]
+sky_top_color = Color(0.395614, 0.386836, 0.643807, 1)
+sky_horizon_color = Color(0.624088, 0.628634, 0.703063, 1)
+ground_bottom_color = Color(0.100738, 0.127701, 0.168445, 1)
+ground_horizon_color = Color(0.624088, 0.628634, 0.703063, 1)
+
+[sub_resource type="Sky" id="Sky_xybsr"]
+sky_material = SubResource("ProceduralSkyMaterial_bljnh")
+
+[sub_resource type="Environment" id="Environment_pf7ri"]
+background_mode = 2
+sky = SubResource("Sky_xybsr")
+tonemap_mode = 2
+glow_enabled = true
+fog_enabled = true
+fog_light_color = Color(0.369207, 0.403283, 0.423128, 1)
+fog_density = 0.1047
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vexok"]
+albedo_texture = ExtResource("1_fcjx1")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mh3ii"]
+albedo_texture = ExtResource("2_nhjdy")
+uv1_scale = Vector3(0.02, 0.02, 0.02)
+uv1_triplanar = true
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f8p2b"]
+albedo_texture = ExtResource("3_cxxfn")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_syxwl"]
+emission_shape = 3
+emission_box_extents = Vector3(50, 1, 50)
+turbulence_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lb2b5"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_vxvuj"]
+material = SubResource("StandardMaterial3D_lb2b5")
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="world" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_pf7ri")
+
+[node name="sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.762871, 0.64655, 0, -0.64655, -0.762871, -0.463286, 14.8899, -0.000360489)
+visible = false
+
+[node name="map" type="Node3D" parent="."]
+
+[node name="refbox3m" type="CSGBox3D" parent="map"]
+transform = Transform3D(0.940537, 0, 0.33969, 0, 1, 0, -0.33969, 0, 0.940537, 4.00678, 1.4, 2.27298)
+material_override = SubResource("StandardMaterial3D_vexok")
+use_collision = true
+size = Vector3(3, 3, 3)
+
+[node name="ground" type="CSGBox3D" parent="map"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.41301, -0.537709, -3.31995)
+material_override = SubResource("StandardMaterial3D_mh3ii")
+use_collision = true
+size = Vector3(1000, 1, 1000)
+
+[node name="refbox1m" type="CSGBox3D" parent="map"]
+transform = Transform3D(-0.605725, 0, 0.795674, 0, 1, 0, -0.795674, 0, -0.605725, -2.34543, 0.4, 1.79773)
+material_override = SubResource("StandardMaterial3D_f8p2b")
+use_collision = true
+
+[node name="refbox2m" type="CSGBox3D" parent="map"]
+transform = Transform3D(0.999986, 0, -0.0053407, 0, 1, 0, 0.00534072, 0, 0.999986, 1.99245, 0.8, -4.10353)
+material_override = SubResource("StandardMaterial3D_vexok")
+use_collision = true
+size = Vector3(2, 2, 2)
+
+[node name="refbox1m2" type="CSGBox3D" parent="map"]
+transform = Transform3D(0.919973, 0, -0.391983, 0, 1, 0, 0.391983, 0, 0.919973, -8.46669, 3.37849, 8.52424)
+material_override = SubResource("StandardMaterial3D_f8p2b")
+use_collision = true
+size = Vector3(7.82971, 6.67786, 8.39404)
+
+[node name="Player" parent="." instance=ExtResource("4_b4vbv")]
+
+[node name="BGM" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_nrhvq")
+volume_db = -18.272
+autoplay = true
+
+[node name="snow" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.5593, 0)
+amount = 2000
+lifetime = 6.98
+process_material = SubResource("ParticleProcessMaterial_syxwl")
+draw_pass_1 = SubResource("BoxMesh_vxvuj")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.97703, 0, 0.931716)
+light_color = Color(1, 0, 0, 1)
+light_energy = 16.0
+light_size = 0.61
+light_bake_mode = 1
+distance_fade_enabled = true
